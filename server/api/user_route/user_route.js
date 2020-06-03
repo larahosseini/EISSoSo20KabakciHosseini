@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-
+const checkAuth = require('../middleware/check_auth');
 const User = require('../../models/user');
 
 // POST: new User
@@ -36,7 +36,7 @@ router.post('/signup', (req, res) => {
                             .then(result => {
                                 console.log('Creating User: ' + result);
                                 res.status(201).json({
-                                    message: 'the user was created, please check your email account to verify your account.',
+                                    message: 'user was created, please check your email account to verify your account.',
                                     createdUser: {
                                         _id: result._id,
                                         email: result.email,
@@ -90,7 +90,7 @@ router.get('/:id', (req, res) => {
 });
 
 // DELETE: user mit id löschen
-router.delete('/:id', (req, res) => {
+router.delete('/:id', checkAuth, (req, res) => {
     User.findByIdAndDelete({_id: req.params.id})
         .exec()
         .then(result => {
@@ -112,7 +112,7 @@ router.delete('/:id', (req, res) => {
 });
 
 //PUT: user mit id updaten
-router.put('/:id', (req, res) => {
+router.put('/:id', checkAuth, (req, res) => {
     handleAddressAndEmailUpdate(req.params.id, req.body, res);
 });
 
