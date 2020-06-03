@@ -2,13 +2,23 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const userRoute = require('./api/user_route/user_route');
 
 // database setup
-mongoose.connect('mongodb://localhost:27017/db_finder',
+mongoose.connect('mongodb://localhost:27017/db_helper',
     {useNewUrlParser: true, useUnifiedTopology: true});
 
 // logging setup
 app.use(morgan('dev'));
+
+// body Parser setup
+app.use(bodyParser.urlencoded(
+    {
+        extended: true
+    })
+);
+app.use(bodyParser.json());
 
 // cors handling
 app.use((req, res, next) => {
@@ -20,6 +30,10 @@ app.use((req, res, next) => {
     }
     next();
 });
+
+// routes
+app.use('/api/users', userRoute);
+
 
 // error handling
 app.use((req, res, next) => {
