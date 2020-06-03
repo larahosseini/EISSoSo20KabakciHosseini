@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRoute = require('./api/user_route/user_route');
+const authenticationRoute = require('./api/user_route/authentication_route');
 
 // database setup
 mongoose.connect('mongodb://localhost:27017/db_helper',
@@ -33,7 +34,7 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/users', userRoute);
-
+app.use('/login', authenticationRoute);
 
 // error handling
 app.use((req, res, next) => {
