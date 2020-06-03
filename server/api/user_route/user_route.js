@@ -85,6 +85,30 @@ router.get('/:id', (req, res) => {
    });
 });
 
+// DELETE: user mit id löschen
+router.delete('/:id', (req, res) => {
+   User.findByIdAndDelete({_id: req.params.id})
+       .exec()
+       .then(result => {
+           console.log('Deleting User: ' + result);
+           if(result) {
+               res.status(200).json({
+                   message: 'user was successful deleted',
+                   deletedUser: {
+                       email: result.email
+                   }
+               });
+           }else {
+               res.status(404).json({
+                   message: 'user was not found'
+               });
+           }
+       })
+       .catch(error => {
+           handleError(res, 500, error);
+   });
+});
+
 function getAllUsers(res) {
     User.find()
         .select('_id email')
