@@ -36,7 +36,16 @@ router.post('/signup', (req, res) => {
                     .then(result => {
                         console.log('Creating User: ' + result);
                         res.status(201).json({
-                            message: 'the user was created, please check your email account to verify your account.'
+                            message: 'the user was created, please check your email account to verify your account.',
+                            createdUser: {
+                                _id: result._id,
+                                email: result.email,
+                                password: result.password,
+                                request: {
+                                    type: 'GET',
+                                    url: 'http:localhost:3000/api/users/' + result._id
+                                }
+                            }
                         });
                     })
                     .catch(error => {
