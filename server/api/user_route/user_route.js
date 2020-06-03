@@ -47,6 +47,98 @@ router.post('/signup', (req, res) => {
     }
 });
 
+// GET: kriege liste aller benutzer
+router.get('/', (req, res) => {
+    if (Object.keys(req.query).length > 0) {
+        if (req.query.email) {
+            getUserByEmail(res, req.query);
+        } else {
+            res.status(405).json({
+                message: 'NOT ALLOWED: Only Search By Email is allowed'
+            });
+        }
+    } else {
+        getAllUsers(res);
+    }
+});
+
+// GET: id
+router.get('/:id', (req, res) => {
+   User.findById(req.params.id)
+       .select('_id email password verified address')
+       .exec()
+       .then(result => {
+           console.log(result);
+           res.status(200).json(result);
+       })
+       .catch(error => {
+       handleError(res, 500, error);
+   });
+});
+
+function getAllUsers(res) {
+    User.find()
+        .select('_id email')
+        .exec()
+        .then(results => {
+            console.log(results);
+            const response = {
+                count: results.length,
+                users: results.map(user => {
+                    return {
+                        _id: user._id,
+                        email: user.email,
+                        request: {
+                            type: 'GET',
+                            url: 'http:localhost:3000/api/users/' + user._id
+                        }
+                    }
+                })
+            }
+            res.status(200).json(response);
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json(
+                {
+                    error: error
+                }
+            )
+        });
+}
+
+// Hilfsfunktion um Benutzer mit Username zu finden
+function getUserByEmail(res, emailQuery) {
+    User.find(emailQuery)
+        .select('_id email password verified address')
+        .exec()
+        .then(results => {
+            console.log(results);
+            const response = {
+                count: results.length,
+                users: results.map(user => {
+                    return {
+                        _id: user._id,
+                        email: user.email,
+                        request: {
+                            type: 'GET',
+                            url: 'http:localhost:3000/users/' + user._id
+                        }
+                    }
+                })
+            }
+            res.status(200).json(response);
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json(
+                {
+                    error: error
+                }
+            )
+        });
+}
+
 // hilfsfunktion um zu überprüfen ob ein benutzer mit der email existiert
 function checkIfUserExists(response, email) {
     return User.findOne({email: email})
