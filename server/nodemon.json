@@ -1,5 +1,7 @@
 {
   "env": {
-    "JWT_SECRET_KEY": "xYgeEP9I3sLBu2bL9!M7RxegP2aUhzw!@4NYLNZQbwcCVidVm1x"
+    "JWT_SECRET_KEY": "xYgeEP9I3sLBu2bL9!M7RxegP2aUhzw!@4NYLNZQbwcCVidVm1x",
+    "EMAIL": "tt4532883@gmail.com",
+    "EMAIL_PW": "t1d@uTKbXAL@s5Y#X8ae"
   }
 }
