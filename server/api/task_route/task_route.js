@@ -8,7 +8,7 @@ const emailSender = require('../utils/email_sender');
 
 
 // POST: erstelle neue Task
-router.post('/', (req, res) => {
+router.post('/', checkAuth, (req, res) => {
     const task = new Task({
         _id: mongoose.Types.ObjectId(),
         creator: req.body.creator,
@@ -30,12 +30,12 @@ router.get('/', (req, res) => {
 });
 
 // GET: listet ein Task mit der id
-router.get('/:id', (req, res) => {
+router.get('/:id', checkAuth, (req, res) => {
     getTaskById(res, req.params.id);
 });
 
 // DELETE: löscht eine task
-router.delete('/:id', (req, res) => {
+router.delete('/:id', checkAuth, (req, res) => {
     Task.findByIdAndDelete(req.params.id)
         .exec()
         .then(result => {
@@ -56,7 +56,7 @@ router.delete('/:id', (req, res) => {
 });
 
 // PUT: eine task updaten
-router.put('/:id', (req, res) => {
+router.put('/:id', checkAuth, (req, res) => {
     Task.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
         .exec()
         .then(task => {
