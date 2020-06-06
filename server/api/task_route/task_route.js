@@ -34,6 +34,7 @@ router.get('/:id', (req, res) => {
    getTaskById(res, req.params.id);
 });
 
+// Hilfsfunktion, listet ein task mit der gegebenen id
 function getTaskById(res, id) {
     Task.findById({_id: id})
         .exec()
@@ -42,7 +43,7 @@ function getTaskById(res, id) {
                 console.log('Task: ' + task);
                 res.status(200).json(task);
             }else {
-
+                handleTaskNotFound(res);
             }
         })
         .catch(error => {
@@ -50,6 +51,7 @@ function getTaskById(res, id) {
         })
 }
 
+// Hilfsfunktion, listet alle tasks auf
 function getAllTasks(res) {
     Task.find()
         .exec()
@@ -62,12 +64,14 @@ function getAllTasks(res) {
         });
 }
 
+// Hilfsfunktion, wenn eine task nicht gefunden werden sollte
 function handleTaskNotFound(response) {
     response.status(404).json({
         message: 'Task not found'
     });
 }
 
+// Hilfsfunktion, wenn ein fehler entsteht
 function handleError(response, statusCode, error) {
     console.log('Error: ' + error);
     return response.status(statusCode).json({
