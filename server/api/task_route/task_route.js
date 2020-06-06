@@ -31,7 +31,27 @@ router.get('/', (req, res) => {
 
 // GET: listet ein Task mit der id
 router.get('/:id', (req, res) => {
-   getTaskById(res, req.params.id);
+    getTaskById(res, req.params.id);
+});
+
+router.delete('/:id', (req, res) => {
+    Task.findByIdAndDelete(req.params.id)
+        .exec()
+        .then(result => {
+            if (result) {
+                console.log('Deleting Task: ' + result);
+                const response = {
+                    message: 'task was deleted',
+                    deletedTask: result
+                }
+                res.status(200).json(response);
+            } else {
+                handleTaskNotFound(res);
+            }
+        })
+        .catch(error => {
+            handleError(res, 500, error);
+        });
 });
 
 // Hilfsfunktion, listet ein task mit der gegebenen id
@@ -42,7 +62,7 @@ function getTaskById(res, id) {
             if (task) {
                 console.log('Task: ' + task);
                 res.status(200).json(task);
-            }else {
+            } else {
                 handleTaskNotFound(res);
             }
         })
@@ -57,7 +77,19 @@ function getAllTasks(res) {
         .exec()
         .then(tasks => {
             console.log('Tasks: ' + tasks);
-            res.status(200).json(tasks);
+            const response = {
+                count: tasks.length,
+                users: tasks.map(task => {
+                    return {
+                        task: task,
+                        request: {
+                            type: 'GET',
+                            url: 'http:localhost:3000/api/tasks/' + task._id
+                        }
+                    };
+                })
+            };
+            res.status(200).json(response);
         })
         .catch(error => {
             handleError(res, 500, error);
