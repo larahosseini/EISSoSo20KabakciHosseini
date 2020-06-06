@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const checkAuth = require('../middleware/check_auth');
 const User = require('../../models/user');
+const Activation = require('../../models/user_activation');
+const emailSender = require('../utils/email_sender');
 
 // POST: new User
 router.post('/signup', (req, res) => {
@@ -15,44 +17,7 @@ router.post('/signup', (req, res) => {
                 handleDuplicateEntries(result, res, req.body.email);
             } else {
                 // falls nein, dann hashe das password und speicher den benutzer in der datenbank
-                bcrypt.hash(req.body.password, 10, (error, hash) => {
-                    if (error) {
-                        handleError(res, 500, error);
-                    } else {
-                        const user = new User({
-                            _id: new mongoose.Types.ObjectId(),
-                            username: req.body.username,
-                            email: req.body.email,
-                            password: hash,
-                            verified: false,
-                            address: {
-                                city: req.body.address.city,
-                                street: req.body.address.street,
-                                street_number: req.body.address.street_number,
-                                zipcode: req.body.address.zipcode
-                            }
-                        });
-                        user.save()
-                            .then(result => {
-                                console.log('Creating User: ' + result);
-                                res.status(201).json({
-                                    message: 'user was created, please check your email account to verify your account.',
-                                    createdUser: {
-                                        _id: result._id,
-                                        email: result.email,
-                                        password: result.password,
-                                        request: {
-                                            type: 'GET',
-                                            url: 'http:localhost:3000/api/users/' + result._id
-                                        }
-                                    }
-                                });
-                            })
-                            .catch(error => {
-                                handleError(res, 500, error);
-                            });
-                    }
-                });
+                createHashForPassword(req.body, res);
             }
         })
         .catch(error => {
@@ -115,6 +80,81 @@ router.delete('/:id', checkAuth, (req, res) => {
 router.put('/:id', checkAuth, (req, res) => {
     handleAddressAndEmailUpdate(req.params.id, req.body, res);
 });
+
+// Hilfsfunktion um einen Hash aus dem Passwort zu erstellen
+function createHashForPassword(body, res) {
+    bcrypt.hash(body.password, 10, (error, hash) => {
+        if (error) {
+            handleError(res, 500, error);
+        } else {
+            const user = new User({
+                _id: new mongoose.Types.ObjectId(),
+                username: body.username,
+                email: body.email,
+                password: hash,
+                verified: false,
+                address: {
+                    city: body.address.city,
+                    street: body.address.street,
+                    street_number: body.address.street_number,
+                    zipcode: body.address.zipcode
+                }
+            });
+            saveUser(user, res);
+        }
+    });
+}
+
+// Hilfsfunktion um einen Benutzer zu speichern
+function saveUser(user, res) {
+    user.save()
+        .then(result => {
+            console.log('Creating User: ' + result);
+            createActivationLink(res, user);
+            res.status(201).json({
+                message: 'user was created, please check your email account to verify your account.',
+                createdUser: {
+                    _id: result._id,
+                    email: result.email,
+                    password: result.password,
+                    request: {
+                        type: 'GET',
+                        url: 'http:localhost:3000/api/users/' + result._id
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            handleError(res, 500, error);
+        });
+}
+
+// Hilfsfunktion um den Activationlink zu erstellen
+function createActivationLink(res, user) {
+    bcrypt.hash(user._id.toString(), 10, (error, hash) => {
+        if (error) {
+            handleError(res, 500, error);
+        } else {
+            console.log('Hash: ' + hash);
+            const activation = new Activation({
+                _id: mongoose.Types.ObjectId(),
+                userIdHashed: hash,
+                user: user._id
+            });
+            activation.save()
+                .then(result => {
+                    if (result) {
+                        console.log('Saving Activation: ' + result);
+                        const activationLink = 'http://localhost:3000/login/activate/' + user._id + '/' + encodeURIComponent(hash);
+                        emailSender.sendRegistrationEmail(user.email, activationLink);
+                    }
+                })
+                .catch(error => {
+                    handleError(res, 500, error);
+                });
+        }
+    });
+}
 
 // Hilfsfunktion um zu ermitteln, was upgedatet werdne soll
 function handleAddressAndEmailUpdate(id, body, res) {
@@ -253,13 +293,13 @@ function getUserByEmail(res, emailQuery) {
 
 function handleError(response, statusCode, error) {
     console.log('Error: ' + error);
-    response.status(statusCode).json({
+    return response.status(statusCode).json({
         error: error
     });
 }
 
 function handleUserNotFound(response) {
-    response.status(404).json({
+    return response.status(404).json({
         message: 'user was not found'
     });
 }
