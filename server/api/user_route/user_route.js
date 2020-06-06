@@ -25,6 +25,35 @@ router.post('/signup', (req, res) => {
         });
 });
 
+// POST: password reset
+router.post('/:userId/password_reset', checkAuth, (req, res) => {
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    console.log(newPassword);
+    User.findOne({_id: req.params.userId})
+        .exec()
+        .then(user => {
+            if (user) {
+                bcrypt.compare(oldPassword, user.password, (error, result) => {
+                    if (error) {
+                        handleError(res, 401, error);
+                    } else {
+                        const passwordObject = {
+                            password: newPassword
+                        }
+                        createPasswordHash(req.params.userId, passwordObject, res);
+                    }
+                })
+            } else {
+                handleUserNotFound(res);
+            }
+        })
+        .catch(error => {
+            handleError(res, 500, error);
+        })
+
+});
+
 // GET: kriege liste aller benutzer
 router.get('/', (req, res) => {
     if (Object.keys(req.query).length > 0) {
@@ -55,7 +84,7 @@ router.get('/:id', (req, res) => {
 });
 
 // DELETE: user mit id löschen
-router.delete('/:id', checkAuth, (req, res) => {
+router.delete('/:id',  (req, res) => {
     User.findByIdAndDelete({_id: req.params.id})
         .exec()
         .then(result => {
@@ -81,7 +110,20 @@ router.put('/:id', checkAuth, (req, res) => {
     handleAddressAndEmailUpdate(req.params.id, req.body, res);
 });
 
-// Hilfsfunktion um einen Hash aus dem Passwort zu erstellen
+// Hilfsfunktion, um einen Hash zu erstellen, wenn ein Passwort upgedatet wird
+function createPasswordHash(userId, passwordObject, response) {
+    bcrypt.hash(passwordObject.password, 10, (error, hashedPassword) => {
+        if (error) {
+            handleError(response, 500, error);
+        } else {
+            passwordObject.password = hashedPassword;
+            handleUpdate(userId, passwordObject, response, 'email password');
+        }
+    });
+}
+
+// Hilfsfunktion um einen Hash aus dem Passwort zu erstellen und dann den user zu speichern, wird benutzt wenn
+// der user sein account erstellt
 function createHashForPassword(body, res) {
     bcrypt.hash(body.password, 10, (error, hash) => {
         if (error) {
@@ -183,12 +225,12 @@ function handleAddressAndEmailUpdate(id, body, res) {
                         email: body.email,
                         address: body.address
                     };
-                    handleUpdate(id, updates, res);
+                    handleUpdate(id, updates, res, 'email address');
                 } else {
                     const updates = {
                         email: body.email
                     };
-                    handleUpdate(id, updates, res);
+                    handleUpdate(id, updates, res, 'email address');
                 }
             })
             .catch(error => {
@@ -207,9 +249,9 @@ function handleDuplicateEntries(result, res, email) {
 }
 
 // Hilfsfunktion, dass die Updates durchführt
-function handleUpdate(id, updates, res) {
+function handleUpdate(id, updates, res, filter) {
     User.findByIdAndUpdate({_id: id}, updates, {new: true})
-        .select('email address')
+        .select(filter)
         .exec()
         .then(user => {
             console.log('Updating user: ' + user);
@@ -217,7 +259,7 @@ function handleUpdate(id, updates, res) {
                 res.status(200).json({
                     message: 'Updates applied',
                     updatedUser: user
-                })
+                });
             } else {
                 handleUserNotFound(res);
             }
