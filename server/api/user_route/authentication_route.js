@@ -9,32 +9,44 @@ router.post('/', (req, res, next) => {
     User.findOne({email: req.body.email})
         .exec()
         .then(user => {
+            // benutzer existiert
             if (user) {
-                // vergleiche password mit dem gespeicherten
-                bcrypt.compare(req.body.password, user.password, (err, result) => {
-                    if (err) {
-                        console.log('Authentication failed: ' + err);
+                // Erlaube keinen Zugriff auf die API, wenn nicht der Account aktiviert wurde
+                if (user.verified === false) {
+                    console.log('Account is verified: ' + user.verified);
+                    rejectIfNotVerified(res);
+                } else {
+                    // Account ist aktiviert, fahre mit anfrage fort
+                    console.log('Account is verified: ' + user.verified);
+                    // vergleiche password mit dem gespeicherten
+                    bcrypt.compare(req.body.password, user.password, (err, result) => {
+                        // wenn das passwort vom einloggen und das in der datenbank nicht passt, schicke nachricht
+                        if (err) {
+                            console.log('Authentication failed: ' + err);
+                            handleAuthenticationFailed(res);
+                        }
+                        // falls passwörter passen
+                        if (result) {
+                            const token = jwt.sign({
+                                    email: user.email, userId: user._id
+                                },
+                                process.env.JWT_SECRET_KEY,
+                                {
+                                    expiresIn: "1h"
+                                }
+                            );
+                            return res.status(200).json(
+                                {
+                                    message: 'Authentication successful',
+                                    token: token
+                                }
+                            );
+                        }
                         handleAuthenticationFailed(res);
-                    }
-                    if (result) {
-                        const token = jwt.sign({
-                                email: user.email, userId: user._id
-                            },
-                            process.env.JWT_SECRET_KEY,
-                            {
-                                expiresIn: "1h"
-                            }
-                        );
-                        return res.status(200).json(
-                            {
-                                message: 'Authentication successful',
-                                token: token
-                            }
-                        );
-                    }
-                    handleAuthenticationFailed(res);
-                });
+                    });
+                }
             } else {
+                // der benutzer wurde nicht gefunden
                 handleAuthenticationFailed(res);
             }
         })
@@ -102,6 +114,16 @@ function handleAuthenticationFailed(response) {
     return response.status(401).json({
         message: 'Authentication failed'
     });
+}
+
+// Hilfsfunktion, die eine Nachricht zurückschickt, 
+// dass der Account erst aktiviert werden muss, um die API zu benutzen
+function rejectIfNotVerified(response) {
+    return response.status(401).json(
+        {
+            message: 'You have to verify your Account to access the API'
+        }
+    )
 }
 
 module.exports = router;
