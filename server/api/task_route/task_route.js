@@ -79,7 +79,7 @@ function getAllTasks(res) {
             console.log('Tasks: ' + tasks);
             const response = {
                 count: tasks.length,
-                users: tasks.map(task => {
+                tasks: tasks.map(task => {
                     return {
                         task: task,
                         request: {
