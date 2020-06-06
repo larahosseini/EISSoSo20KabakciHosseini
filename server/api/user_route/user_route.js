@@ -162,7 +162,7 @@ function handleAddressAndEmailUpdate(id, body, res) {
         return res.status(403).json(
             {
                 message: 'to change your password, please follow the url',
-                password_reset_url: 'http://localhost:3000/api/password_reset'
+                password_reset_url: 'http://localhost:3000/api/users/' + id + 'password_reset'
             }
         );
     } else if (body.verified) {
