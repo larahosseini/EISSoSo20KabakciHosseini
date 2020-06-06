@@ -34,6 +34,7 @@ router.get('/:id', (req, res) => {
     getTaskById(res, req.params.id);
 });
 
+// DELETE: löscht eine task
 router.delete('/:id', (req, res) => {
     Task.findByIdAndDelete(req.params.id)
         .exec()
@@ -44,6 +45,27 @@ router.delete('/:id', (req, res) => {
                     message: 'task was deleted',
                     deletedTask: result
                 }
+                res.status(200).json(response);
+            } else {
+                handleTaskNotFound(res);
+            }
+        })
+        .catch(error => {
+            handleError(res, 500, error);
+        });
+});
+
+// PUT: eine task updaten
+router.put(':id', (req, res) => {
+    Task.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
+        .exec()
+        .then(task => {
+            if (task) {
+                console.log('Updated Task: ' + task);
+                const response = {
+                    message: 'Task updated',
+                    updatedTask: task
+                };
                 res.status(200).json(response);
             } else {
                 handleTaskNotFound(res);
