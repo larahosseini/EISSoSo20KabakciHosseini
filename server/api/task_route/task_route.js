@@ -24,7 +24,49 @@ router.post('/', (req, res) => {
     });
 });
 
+// GET: listet alle tasks auf
+router.get('/', (req, res) => {
+    getAllTasks(res);
+});
 
+// GET: listet ein Task mit der id
+router.get('/:id', (req, res) => {
+   getTaskById(res, req.params.id);
+});
+
+function getTaskById(res, id) {
+    Task.findById({_id: id})
+        .exec()
+        .then(task => {
+            if (task) {
+                console.log('Task: ' + task);
+                res.status(200).json(task);
+            }else {
+
+            }
+        })
+        .catch(error => {
+            handleError(res, 500, error);
+        })
+}
+
+function getAllTasks(res) {
+    Task.find()
+        .exec()
+        .then(tasks => {
+            console.log('Tasks: ' + tasks);
+            res.status(200).json(tasks);
+        })
+        .catch(error => {
+            handleError(res, 500, error);
+        });
+}
+
+function handleTaskNotFound(response) {
+    response.status(404).json({
+        message: 'Task not found'
+    });
+}
 
 function handleError(response, statusCode, error) {
     console.log('Error: ' + error);
