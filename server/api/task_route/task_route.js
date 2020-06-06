@@ -56,7 +56,7 @@ router.delete('/:id', (req, res) => {
 });
 
 // PUT: eine task updaten
-router.put(':id', (req, res) => {
+router.put('/:id', (req, res) => {
     Task.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
         .exec()
         .then(task => {
