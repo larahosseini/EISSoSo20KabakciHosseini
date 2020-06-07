@@ -342,7 +342,7 @@ function getUserByEmail(res, emailQuery) {
 function handleError(response, statusCode, error) {
     console.log('Error: ' + error);
     return response.status(statusCode).json({
-        error: error
+        message: error
     });
 }
 
