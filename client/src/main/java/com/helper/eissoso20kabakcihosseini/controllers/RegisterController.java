@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.helper.eissoso20kabakcihosseini.App;
 import javafx.fxml.FXML;
 
-public class SecondaryController {
+public class RegisterController {
 
     @FXML
     private void switchToPrimary() throws IOException {
