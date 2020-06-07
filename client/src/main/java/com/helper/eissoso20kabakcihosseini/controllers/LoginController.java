@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.helper.eissoso20kabakcihosseini.App;
+import com.helper.eissoso20kabakcihosseini.utils.Validator;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
@@ -15,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
 import org.apache.commons.validator.routines.EmailValidator;
 
 public class LoginController implements Initializable {
@@ -42,11 +44,14 @@ public class LoginController implements Initializable {
 
 
     @FXML
-    private void handleLogin() throws IOException {
+    private void handleLogin()  {
         String email = emailField.getText().trim();
         String password = passwordField.getText();
+    }
 
-        System.out.println("Email: " + email + " Password: " + password);
+    @FXML
+    private void handleUserRegistration() throws IOException{
+        App.setRoot("register");
     }
 
     // Hilfsfunktion, um zu überprüfen ob das emailField eine nicht richtige email beinhaltet, wenn ja zeige fehler an
@@ -54,7 +59,7 @@ public class LoginController implements Initializable {
         emailField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-                if (!isValidEmail(newValue) || newValue.isEmpty()) {
+                if (!Validator.isValidEmail(newValue) || newValue.isEmpty()) {
                     System.out.println("Email Error");
                     emailErrorContainer.setVisible(true);
                     emailField.setFocusColor(Color.RED);
@@ -83,11 +88,8 @@ public class LoginController implements Initializable {
         });
     }
 
-    // Hilfsfunktion, um zu überprüfen ob das eine richtige email ist
-    private boolean isValidEmail(String email) {
-        EmailValidator validator = EmailValidator.getInstance();
-        return validator.isValid(email);
-    }
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
