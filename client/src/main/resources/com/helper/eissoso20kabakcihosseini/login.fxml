@@ -13,23 +13,43 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.helper.eissoso20kabakcihosseini.controllers.LoginController">
    <children>
       <Pane layoutX="414.0" layoutY="47.0" prefHeight="407.0" prefWidth="362.0" style="-fx-background-color: #424242;" AnchorPane.bottomAnchor="46.0" AnchorPane.leftAnchor="414.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="47.0">
          <children>
-            <JFXTextField fx:id="emailField" focusColor="#0093d9" labelFloat="true" layoutX="37.0" layoutY="54.0" prefHeight="33.0" prefWidth="288.0" promptText="Email-Adresse" unFocusColor="WHITE">
+            <JFXTextField fx:id="emailField" focusColor="#0093d9" labelFloat="true" layoutX="37.0" layoutY="41.0" prefHeight="33.0" prefWidth="288.0" promptText="Email-Adresse" style="-jfx-focus-color: white; -jfx-unfocus-color: white;" unFocusColor="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
             </JFXTextField>
-            <JFXPasswordField fx:id="passwordField" focusColor="#0093d9" labelFloat="true" layoutX="37.0" layoutY="149.0" prefHeight="39.0" prefWidth="288.0" promptText="Password" unFocusColor="WHITE">
+            <VBox fx:id="emailErrorContainer" layoutX="37.0" layoutY="87.0" visible="false">
+               <children>
+                  <Separator prefHeight="3.0" prefWidth="288.0" style="-fx-background-color: red;" />
+                  <Label fx:id="errorLabelEmail" prefHeight="54.0" prefWidth="288.0" text="Die Email ist keine richtige Email, bitte ändern" textFill="RED" wrapText="true">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <JFXPasswordField fx:id="passwordField" focusColor="#0093d9" labelFloat="true" layoutX="37.0" layoutY="177.0" prefHeight="39.0" prefWidth="288.0" promptText="Password" unFocusColor="WHITE">
                <font>
                   <Font name="Calibri" size="18.0" />
                </font>
             </JFXPasswordField>
-            <HBox layoutX="36.0" layoutY="314.0" prefHeight="48.0" prefWidth="288.0" spacing="10.0">
+            <VBox fx:id="passwordErrorContainer" layoutX="37.0" layoutY="224.0" visible="false">
                <children>
-                  <JFXButton fx:id="loginButton" buttonType="RAISED" prefHeight="48.0" prefWidth="139.0" ripplerFill="#0093d9" style="-fx-background-color: white;" text="Login" textFill="#0093d9">
+                  <Separator prefHeight="3.0" prefWidth="288.0" style="-fx-background-color: red;" />
+                  <Label fx:id="errorLabelPassword" prefHeight="46.0" prefWidth="288.0" text="Ihr Password ist leer" textFill="RED" wrapText="true">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <HBox layoutX="37.0" layoutY="324.0" prefHeight="48.0" prefWidth="288.0" spacing="10.0">
+               <children>
+                  <JFXButton fx:id="loginButton" buttonType="RAISED" onAction="#handleLogin" prefHeight="48.0" prefWidth="139.0" ripplerFill="#0093d9" style="-fx-background-color: white;" text="Login" textFill="#0093d9">
                      <font>
                         <Font size="22.0" />
                      </font>
@@ -41,11 +61,6 @@
                   </JFXButton>
                </children>
             </HBox>
-            <Label fx:id="errorLabel" layoutX="36.0" layoutY="210.0" prefHeight="80.0" prefWidth="288.0" text="Error" textFill="RED" wrapText="true">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
          </children></Pane>
       <Pane blendMode="SOFT_LIGHT" layoutX="29.0" layoutY="47.0">
          <children>
