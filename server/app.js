@@ -8,7 +8,7 @@ const authenticationRoute = require('./api/user_route/authentication_route');
 const taskRoute = require('./api/task_route/task_route');
 
 // database setup
-mongoose.connect('mongodb://localhost:27017/db_helper',
+mongoose.connect('mongodb+srv://admin:admin@cluster0-8efry.mongodb.net/test?retryWrites=true&w=majority',
     {useNewUrlParser: true, useUnifiedTopology: true});
 
 // logging setup
