@@ -17,14 +17,13 @@
    <children>
       <Pane layoutX="414.0" layoutY="47.0" prefHeight="407.0" prefWidth="362.0" style="-fx-background-color: #424242;" AnchorPane.bottomAnchor="46.0" AnchorPane.leftAnchor="414.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="47.0">
          <children>
-            <JFXTextField fx:id="emailField" focusColor="#0093d9" labelFloat="true" layoutX="37.0" layoutY="41.0" prefHeight="33.0" prefWidth="288.0" promptText="Email-Adresse" style="-jfx-focus-color: white; -jfx-unfocus-color: white;" unFocusColor="WHITE">
+            <JFXTextField fx:id="emailField" focusColor="#0093d9" labelFloat="true" layoutX="37.0" layoutY="41.0" prefHeight="33.0" prefWidth="288.0" promptText="Email-Adresse" style="-jfx-unfocus-color: white;" stylesheets="@css/login.css" unFocusColor="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
             </JFXTextField>
             <VBox fx:id="emailErrorContainer" layoutX="37.0" layoutY="87.0" visible="false">
                <children>
-                  <Separator prefHeight="3.0" prefWidth="288.0" style="-fx-background-color: red;" />
                   <Label fx:id="errorLabelEmail" prefHeight="54.0" prefWidth="288.0" text="Die Email ist keine richtige Email, bitte ändern" textFill="RED" wrapText="true">
                      <font>
                         <Font size="16.0" />
@@ -39,7 +38,6 @@
             </JFXPasswordField>
             <VBox fx:id="passwordErrorContainer" layoutX="37.0" layoutY="224.0" visible="false">
                <children>
-                  <Separator prefHeight="3.0" prefWidth="288.0" style="-fx-background-color: red;" />
                   <Label fx:id="errorLabelPassword" prefHeight="46.0" prefWidth="288.0" text="Ihr Password ist leer" textFill="RED" wrapText="true">
                      <font>
                         <Font size="16.0" />
