@@ -45,10 +45,11 @@ public class LoginController implements Initializable {
 
 
     @FXML
-    private void handleLogin()  {
+    private void handleLogin() throws IOException {
         String email = emailField.getText().trim();
         String password = passwordField.getText();
         APICaller.login(email, password);
+        App.setRoot("profile");
     }
 
     @FXML
