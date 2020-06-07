@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.helper.eissoso20kabakcihosseini.App;
+import com.helper.eissoso20kabakcihosseini.utils.APICaller;
 import com.helper.eissoso20kabakcihosseini.utils.Validator;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
@@ -47,6 +48,7 @@ public class LoginController implements Initializable {
     private void handleLogin()  {
         String email = emailField.getText().trim();
         String password = passwordField.getText();
+        APICaller.login(email, password);
     }
 
     @FXML
@@ -54,19 +56,19 @@ public class LoginController implements Initializable {
         App.setRoot("register");
     }
 
+
+
     // Hilfsfunktion, um zu überprüfen ob das emailField eine nicht richtige email beinhaltet, wenn ja zeige fehler an
     private void showEmailError() {
         emailField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
                 if (!Validator.isValidEmail(newValue) || newValue.isEmpty()) {
-                    System.out.println("Email Error");
-                    emailErrorContainer.setVisible(true);
+                    errorLabelEmail.setVisible(true);
                     emailField.setFocusColor(Color.RED);
                 } else {
-                    System.out.println("Email valid");
                     emailField.setFocusColor(Color.rgb(0, 147, 217));
-                    emailErrorContainer.setVisible(false);
+                    errorLabelEmail.setVisible(false);
                 }
             }
         });
@@ -78,11 +80,11 @@ public class LoginController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
                 if (newValue.isEmpty()) {
-                    passwordErrorContainer.setVisible(true);
+                    errorLabelPassword.setVisible(true);
                     passwordField.setFocusColor(Color.RED);
                 } else {
                     passwordField.setFocusColor(Color.rgb(0, 147, 217));
-                    passwordErrorContainer.setVisible(false);
+                    errorLabelPassword.setVisible(false);
                 }
             }
         });
@@ -95,5 +97,6 @@ public class LoginController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         showEmailError();
         showPasswordError();
+        loginButton.disableProperty().bind(emailField.textProperty().isEmpty().or(passwordField.textProperty().isEmpty()));
     }
 }
