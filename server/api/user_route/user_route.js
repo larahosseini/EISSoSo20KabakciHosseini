@@ -138,7 +138,7 @@ function createHashForPassword(body, res) {
                 address: {
                     city: body.address.city,
                     street: body.address.street,
-                    street_number: body.address.street_number,
+                    streetNnumber: body.address.street_number,
                     zipcode: body.address.zipcode
                 }
             });
