@@ -1,0 +1,8 @@
+.text-input{
+    -fx-text-fill: white;
+}
+
+.text-input:filled {
+    -fx-text-fill: white;
+}
+
