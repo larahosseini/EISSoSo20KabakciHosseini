@@ -9,6 +9,12 @@ const emailSender = require('../utils/email_sender');
 
 // POST: new User
 router.post('/signup', (req, res) => {
+    console.log('Email: ' + req.body.email);
+    console.log('Password: ' + req.body.password);
+    console.log('City: ' + req.body.address.city);
+    console.log('Street: ' + req.body.address.street + ' ' + req.body.address.streetNumber);
+    console.log('Zipcode: ' + req.body.address.zipcode);
+
     // überprüfe ob benutzer existiert
     User.findOne({email: req.body.email})
         .exec()
@@ -138,7 +144,7 @@ function createHashForPassword(body, res) {
                 address: {
                     city: body.address.city,
                     street: body.address.street,
-                    streetNnumber: body.address.street_number,
+                    streetNumber: body.address.streetNumber,
                     zipcode: body.address.zipcode
                 }
             });
@@ -336,7 +342,7 @@ function getUserByEmail(res, emailQuery) {
 function handleError(response, statusCode, error) {
     console.log('Error: ' + error);
     return response.status(statusCode).json({
-        error: error
+        message: error
     });
 }
 
