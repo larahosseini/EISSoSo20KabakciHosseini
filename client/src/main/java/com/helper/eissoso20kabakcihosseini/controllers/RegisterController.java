@@ -2,6 +2,7 @@ package com.helper.eissoso20kabakcihosseini.controllers;
 
 import com.helper.eissoso20kabakcihosseini.App;
 import com.helper.eissoso20kabakcihosseini.utils.APICaller;
+import com.helper.eissoso20kabakcihosseini.utils.AlertHelper;
 import com.helper.eissoso20kabakcihosseini.utils.Validator;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
@@ -10,6 +11,7 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -56,14 +58,50 @@ public class RegisterController implements Initializable {
 
     @FXML
     private void createUser() throws IOException {
-        APICaller.createUser(email, password, city, street, streetNumber, Integer.parseInt(zipcode));
+        Task<Void> task = APICaller.createUser(email, password, city, street, streetNumber, Integer.parseInt(zipcode));
+        task.messageProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                String statuscode = t1.split(",")[0];
+                String message = t1.split(",")[1];
+                if (statuscode.equals("201")) {
+                    AlertHelper.showSuccesAlert(message);
+                } else if (statuscode.equals("400") || statuscode.equals("500")) {
+                    AlertHelper.showErrorAlert(message);
+                }
+                System.out.println("Received message: " + message);
+            }
+        });
+        new Thread(task).start();
+    }
+
+    @FXML
+    private void goBackToLogin() throws IOException {
+        App.setRoot("login");
     }
 
     @FXML
     private void goToLogin() throws IOException {
         String link = activationLinkField.getText().trim();
-        APICaller.activateAccount(link);
-        App.setRoot("login");
+        Task<Void> task = APICaller.activateAccount(link);
+        task.messageProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String message) {
+                String statuscode = message.split(",")[0];
+                String m = message.split(",")[1];
+                if (statuscode.equals("200")) {
+                    // change to profile screen
+                    try {
+                        App.setRoot("profile");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (statuscode.equals("401")) {
+                    AlertHelper.showErrorAlert(message);
+                }
+            }
+        });
+        new Thread(task).start();
     }
 
     // Hilfsfunktion, um zu überprüfen ob das emailField eine nicht richtige email beinhaltet, wenn ja zeige fehler an
