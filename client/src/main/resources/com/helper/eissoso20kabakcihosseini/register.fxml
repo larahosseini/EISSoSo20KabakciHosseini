@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="876.0" style="-fx-background-color: #121212;" stylesheets="@css/login.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.helper.eissoso20kabakcihosseini.controllers.RegisterController">
    <children>
       <Label layoutX="299.0" layoutY="21.0" text="Erstelle dein Account" textFill="WHITE">
@@ -163,9 +162,14 @@
             <Font size="18.0" />
          </font>
       </JFXTextField>
-      <JFXButton fx:id="goToLoginButton" buttonType="RAISED" layoutX="380.0" layoutY="531.0" onAction="#goToLogin" ripplerFill="#0093d9" style="-fx-background-color: #0093d9;" text="Go to Login" textFill="WHITE">
+      <JFXButton fx:id="goToLoginButton" buttonType="RAISED" layoutX="394.0" layoutY="531.0" onAction="#goToLogin" ripplerFill="#0093d9" style="-fx-background-color: #0093d9;" text="Activate" textFill="WHITE">
          <font>
             <Font size="18.0" />
+         </font>
+      </JFXButton>
+      <JFXButton buttonType="RAISED" layoutX="41.0" layoutY="21.0" onAction="#goBackToLogin" styleClass="backButton" stylesheets="@css/login.css" text="Zurück" textFill="WHITE">
+         <font>
+            <Font size="21.0" />
          </font>
       </JFXButton>
    </children>
