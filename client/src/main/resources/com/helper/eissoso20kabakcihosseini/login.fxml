@@ -14,7 +14,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="876.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.helper.eissoso20kabakcihosseini.controllers.LoginController">
    <children>
-      <Pane layoutX="414.0" layoutY="97.0" prefHeight="407.0" prefWidth="438.0" style="-fx-background-color: #424242;" AnchorPane.bottomAnchor="96.0" AnchorPane.leftAnchor="414.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="97.0">
+      <Pane layoutX="30.0" layoutY="167.0" prefHeight="407.0" prefWidth="817.0" style="-fx-background-color: #424242;" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="167.0">
          <children>
             <VBox fx:id="emailErrorContainer" alignment="CENTER" layoutX="39.0" layoutY="48.0" prefHeight="119.0" prefWidth="363.0">
                <children>
@@ -44,7 +44,7 @@
                   </Label>
                </children>
             </VBox>
-            <HBox layoutX="76.0" layoutY="338.0" prefHeight="48.0" prefWidth="288.0" spacing="10.0">
+            <HBox alignment="CENTER" layoutX="42.0" layoutY="328.0" prefHeight="48.0" prefWidth="363.0" spacing="50.0">
                <children>
                   <JFXButton fx:id="loginButton" buttonType="RAISED" onAction="#handleLogin" prefHeight="48.0" prefWidth="139.0" ripplerFill="#0093d9" style="-fx-background-color: white;" text="Login" textFill="#0093d9">
                      <font>
@@ -58,17 +58,13 @@
                   </JFXButton>
                </children>
             </HBox>
-         </children></Pane>
-      <Pane blendMode="SOFT_LIGHT" layoutX="28.0" layoutY="97.0" prefHeight="407.0">
-         <children>
-            <ImageView fitHeight="407.0" fitWidth="363.0" pickOnBounds="true">
+            <ImageView fitHeight="359.0" fitWidth="362.0" layoutX="434.0" layoutY="24.0" pickOnBounds="true">
                <image>
                   <Image url="@assets/helping-hands.jpg" />
                </image>
             </ImageView>
-         </children>
-      </Pane>
-      <VBox alignment="CENTER" layoutX="29.0" layoutY="-51.0" prefHeight="250.0" prefWidth="362.0">
+         </children></Pane>
+      <VBox alignment="CENTER" layoutX="258.0" layoutY="-38.0" prefHeight="250.0" prefWidth="362.0">
          <children>
             <Label text="Helper" textFill="#0093d9">
                <font>
