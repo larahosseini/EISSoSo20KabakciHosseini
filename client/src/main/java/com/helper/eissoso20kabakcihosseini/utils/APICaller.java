@@ -15,49 +15,51 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 
 public class APICaller {
 
     public static int statusCode = -1;
     public static String message = "";
-    private String token = "";
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
-
-    public static void createUser(String email, String password, String city, String street, String streetNumber, Integer zipcode) throws JsonProcessingException {
-        Task<String> task = new Task<String>() {
+    public static Task<Void> createAccount(String email, String password, String city, String street, String streetNumber, Integer zipcode) throws JsonProcessingException {
+        return new Task<>() {
             @Override
-            protected String call() throws Exception {
-                ObjectMapper mapper = new ObjectMapper();
-                String newUserUrl = "http://localhost:3000/api/users/signup";
-
+            protected Void call() throws Exception {
                 Address address = new Address(city, street, streetNumber, zipcode);
                 UserRegistration registration = new UserRegistration(email, password, address);
                 String jsonData = mapper.writeValueAsString(registration);
                 System.out.println(jsonData);
 
                 // HttpClient für das Senden von Anfragen
-                HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .header("Content-Type", "application/json; charset=utf-8")
-                        .uri(URI.create(newUserUrl))
+                        .uri(URI.create(URLs.CREATE_USER))
                         .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                
+                Map<?, ?> map = mapper.readValue(response.body(), Map.class);
+
+                statusCode = response.statusCode();
+                message = (String) map.get("message");
 
                 System.out.println("Status: " + response.statusCode());
-                System.out.println(response.body());
-                statusCode = response.statusCode();
-                message = response.body();
-                return response.body();
+                System.out.println("Message: " + message);
+
+                updateMessage(statusCode + "," + message);
+
+                return null;
             }
         };
-        new Thread(task).start();
     }
 
-    public static void activateAccount(String activationLink) {
-        Task task = new Task() {
+    public static Task<Void> activateAccount(String activationLink) {
+        return new Task<>() {
             @Override
-            protected Object call() throws Exception {
+            protected Void call() throws Exception {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .header("Content-Type", "application/json; charset=utf-8")
@@ -65,45 +67,63 @@ public class APICaller {
                         .uri(URI.create(activationLink))
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                System.out.println(response.body());
+                ObjectMapper mapper = new ObjectMapper();
+                Map<?, ?> map = mapper.readValue(response.body(), Map.class);
+                message = (String) map.get("message");
+                statusCode = response.statusCode();
+                updateMessage(statusCode + "," + message);
                 return null;
             }
         };
-        new Thread(task).start();
     }
 
-    public static void login(String email, String password) {
-        Task task = new Task() {
+    public static Task<Void> login(String email, String password) {
+        return new Task<>() {
             @Override
-            protected Object call() throws Exception {
+            protected Void call() throws Exception {
                 ObjectMapper mapper = new ObjectMapper();
                 Login login = new Login();
                 login.setEmail(email);
                 login.setPassword(password);
                 String jsonData = mapper.writeValueAsString(login);
-                String loginUrl = "http://localhost:3000/login";
 
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .header("Content-Type", "application/json; charset=utf-8")
                         .POST(HttpRequest.BodyPublishers.ofString(jsonData))
-                        .uri(URI.create(loginUrl))
+                        .uri(URI.create(URLs.LOGIN))
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                // parsing data
                 String body = response.body();
+                System.out.println(body);
                 Reader reader = new StringReader(body);
                 ObjectNode rootNode = mapper.readValue(reader, ObjectNode.class);
                 JsonNode tokenNode = rootNode.get("token");
-                System.out.println("Token: " + tokenNode.asText());
-
-
+                // saving token in file
                 Session session = new Session();
                 session.createSession(tokenNode.asText());
 
-                System.out.println(Session.getSession());
+                updateMessage(response.statusCode() + "," + tokenNode.asText());
+
                 return null;
             }
         };
-        new Thread(task).start();
+    }
+
+    public static Task<Void> getProfile(String id) {
+        return new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .header("Content-Type", "application/json; charset=utf-8")
+                        .GET()
+                        .uri(URI.create(URLs.GET_USERS + "/" + id))
+                        .build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                Map<?, ?> map = mapper.readValue(response.body(), Map.class);
+                return null;
+            }
+        };
     }
 }
