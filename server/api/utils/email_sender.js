@@ -22,7 +22,7 @@ exports.sendRegistrationEmail = function sendRegistrationEmail(email, activation
         if (error) {
             console.log(error);
         } else {
-            console.log('Email sent: ' + result.email);
+            console.log('Email sent');
         }
     });
 }
