@@ -58,7 +58,7 @@ public class RegisterController implements Initializable {
 
     @FXML
     private void createUser() throws IOException {
-        Task<Void> task = APICaller.createUser(email, password, city, street, streetNumber, Integer.parseInt(zipcode));
+        Task<Void> task = APICaller.createAccount(email, password, city, street, streetNumber, Integer.parseInt(zipcode));
         task.messageProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
