@@ -1,24 +1,24 @@
 package com.helper.eissoso20kabakcihosseini.controllers;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import com.helper.eissoso20kabakcihosseini.App;
 import com.helper.eissoso20kabakcihosseini.utils.APICaller;
+import com.helper.eissoso20kabakcihosseini.utils.AlertHelper;
 import com.helper.eissoso20kabakcihosseini.utils.Validator;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import org.apache.commons.validator.routines.EmailValidator;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
 
@@ -48,15 +48,34 @@ public class LoginController implements Initializable {
     private void handleLogin() throws IOException {
         String email = emailField.getText().trim();
         String password = passwordField.getText();
-        APICaller.login(email, password);
-        App.setRoot("profile");
+        System.out.println("Email: " + email + " Password: " + password);
+        Task<Void> task = APICaller.login(email, password);
+        task.messageProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldMessage, String newMessage) {
+                String statusCode = newMessage.split(",")[0];
+                String message = newMessage.split(",")[1];
+                if (statusCode.equals("200")) {
+                    try {
+                        System.out.println(message);
+                        App.setRoot("profile");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (statusCode.equals("401")) {
+                    System.out.println(message);
+                    AlertHelper.showLoadingDialog();
+                }
+            }
+        });
+        new Thread(task).start();
+
     }
 
     @FXML
-    private void handleUserRegistration() throws IOException{
+    private void handleUserRegistration() throws IOException {
         App.setRoot("register");
     }
-
 
 
     // Hilfsfunktion, um zu überprüfen ob das emailField eine nicht richtige email beinhaltet, wenn ja zeige fehler an
@@ -90,8 +109,6 @@ public class LoginController implements Initializable {
             }
         });
     }
-
-
 
 
     @Override
