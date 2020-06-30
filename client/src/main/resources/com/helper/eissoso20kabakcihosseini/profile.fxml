@@ -48,12 +48,17 @@
             </HBox>
          </children>
       </VBox>
-      <JFXButton fx:id="passwordResetButton" layoutX="714.0" layoutY="524.0" styleClass="passwordResetButton" text="Password Ändern" textFill="WHITE" />
-      <JFXButton fx:id="updateButton" buttonType="RAISED" layoutX="100.0" layoutY="520.0" onAction="#updateProfile" prefHeight="33.0" prefWidth="281.0" text="AKTUALISIEREN">
-         <styleClass>
-            <String fx:value="editButton" />
-            <String fx:value="updateButton" />
-         </styleClass>
-      </JFXButton>
+      <JFXButton fx:id="passwordResetButton" layoutX="714.0" layoutY="512.0" styleClass="passwordResetButton" text="Password Ändern" textFill="WHITE" />
+      <HBox layoutX="100.0" layoutY="508.0" prefHeight="33.0" prefWidth="499.0" spacing="40.0">
+         <children>
+            <JFXButton fx:id="updateButton" buttonType="RAISED" onAction="#updateProfile" prefHeight="33.0" prefWidth="281.0" text="AKTUALISIEREN">
+               <styleClass>
+                  <String fx:value="editButton" />
+                  <String fx:value="updateButton" />
+               </styleClass>
+            </JFXButton>
+            <JFXButton fx:id="deleteAccountButton" buttonType="RAISED" onAction="#deleteAccount" prefHeight="33.0" prefWidth="281.0" styleClass="deleteAccountButton" text="ACCOUNT LÖSCHEN" />
+         </children>
+      </HBox>
    </children>
 </AnchorPane>
