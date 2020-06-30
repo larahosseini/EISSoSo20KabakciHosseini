@@ -1,0 +1,37 @@
+.headerContainer{
+    -fx-background-color: #242424;
+}
+
+.updateButton {
+    -fx-background-color: #0093d9;
+    -fx-text-fill: white;
+}
+
+.editButton{
+    -fx-text-fill: white;
+}
+
+.text-input {
+    -fx-background-color: #101010;
+    -fx-prompt-text-fill: white;
+}
+
+
+.backButton{
+    -fx-background-color: #101010;
+    -fx-text-fill: white;
+}
+
+.backButton:hover{
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.passwordResetButton{
+    -fx-text-fill: white;
+    -fx-background-color: #101010;
+}
+
+.passwordResetButton:hover {
+    -fx-background-color: #0093d9;
+}
