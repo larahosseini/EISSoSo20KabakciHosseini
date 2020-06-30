@@ -58,7 +58,7 @@ public class LoginController implements Initializable {
                 if (statusCode.equals("200")) {
                     try {
                         System.out.println(message);
-                        App.setRoot("profile");
+                        App.setRoot("dashboard");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
