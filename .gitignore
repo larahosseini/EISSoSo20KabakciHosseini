@@ -79,3 +79,5 @@ build/Release
 node_modules
 
 server/package-lock.json
+/config/session.json
+client/config/
