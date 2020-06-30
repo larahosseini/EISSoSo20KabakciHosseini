@@ -6,18 +6,19 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.helper.eissoso20kabakcihosseini.models.Session;
 
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public class Session {
+public class SessionHandler {
 
     private static String configDir = "config";
     private static String fileName = "session.json";
     private String token = "";
 
-    public void createSession(String token) {
+    public void createSession(String email, String token) {
         // ordner config
         File configFile = new File(configDir);
 
@@ -28,16 +29,13 @@ public class Session {
         String filePath = configDir + "/" + fileName;
         FileWriter writer = null;
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode tokenNode = mapper.createObjectNode();
-
-        ((ObjectNode) tokenNode).put("token", token);
+        Session session = new Session(email, token);
 
         String jsonString = "";
 
         try {
             writer = new FileWriter(filePath);
-            jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tokenNode);
-            System.out.println("Writing token to file: " + jsonString);
+            jsonString = mapper.writeValueAsString(session);
             writer.write(jsonString);
             writer.close();
         } catch (JsonProcessingException e) {
@@ -47,17 +45,15 @@ public class Session {
         }
     }
 
-    public static String getSession(){
-        // ordner config
-        File configFile = new File(configDir);
-
+    public static Session getSession() {
         String filePath = configDir + "/" + fileName;
         try {
             ObjectMapper mapper = new ObjectMapper();
             Map<?, ?> map = mapper.readValue(Paths.get(filePath).toFile(), Map.class);
             String token = (String) map.get("token");
-            System.out.println(token);
-            return token;
+            String email = (String) map.get("email");
+            System.out.println("Email: " + email + ", Token: " + token);
+            return new Session(email, token);
         } catch (IOException e) {
             e.printStackTrace();
         }
