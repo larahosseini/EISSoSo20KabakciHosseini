@@ -101,8 +101,8 @@ public class APICaller {
                 ObjectNode rootNode = mapper.readValue(reader, ObjectNode.class);
                 JsonNode tokenNode = rootNode.get("token");
                 // saving token in file
-                Session session = new Session();
-                session.createSession(tokenNode.asText());
+                SessionHandler sessionHandler = new SessionHandler();
+                sessionHandler.createSession(email, tokenNode.asText());
 
                 updateMessage(response.statusCode() + "," + tokenNode.asText());
 
