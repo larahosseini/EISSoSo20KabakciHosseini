@@ -5,6 +5,7 @@
 .updateButton {
     -fx-background-color: #0093d9;
     -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
 .editButton{
@@ -30,8 +31,15 @@
 .passwordResetButton{
     -fx-text-fill: white;
     -fx-background-color: #101010;
+    -fx-font-weight: bold;
 }
 
 .passwordResetButton:hover {
     -fx-background-color: #0093d9;
+}
+
+.deleteAccountButton {
+    -fx-text-fill: white;
+    -fx-background-color: red;
+    -fx-font-weight: bold;
 }
