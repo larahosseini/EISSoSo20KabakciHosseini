@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.helper.eissoso20kabakcihosseini.models.Address;
 import com.helper.eissoso20kabakcihosseini.models.Login;
+import com.helper.eissoso20kabakcihosseini.models.User;
 import com.helper.eissoso20kabakcihosseini.models.UserRegistration;
 import javafx.concurrent.Task;
 
@@ -15,7 +16,14 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class APICaller {
 
@@ -39,15 +47,12 @@ public class APICaller {
                         .uri(URI.create(URLs.CREATE_USER))
                         .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                         .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                
-                Map<?, ?> map = mapper.readValue(response.body(), Map.class);
+//                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                Map<String, String> map = getResponseData(request);
+                Map<?, ?> data = mapper.readValue(map.get("body"), Map.class);
 
-                statusCode = response.statusCode();
+                statusCode = Integer.parseInt(map.get("statusCode"));
                 message = (String) map.get("message");
-
-                System.out.println("Status: " + response.statusCode());
-                System.out.println("Message: " + message);
 
                 updateMessage(statusCode + "," + message);
 
@@ -60,18 +65,13 @@ public class APICaller {
         return new Task<>() {
             @Override
             protected Void call() throws Exception {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .header("Content-Type", "application/json; charset=utf-8")
-                        .GET()
-                        .uri(URI.create(activationLink))
-                        .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                ObjectMapper mapper = new ObjectMapper();
-                Map<?, ?> map = mapper.readValue(response.body(), Map.class);
-                message = (String) map.get("message");
-                statusCode = response.statusCode();
+                Map<String, String> activateAccountResults = verifyAccount(activationLink);
+                Map<?, ?> activationJSONMap = mapper.readValue(activateAccountResults.get("body"), Map.class);
+
+                message = (String) activationJSONMap.get("message");
+                statusCode = Integer.parseInt(activateAccountResults.get("statuscode"));
                 updateMessage(statusCode + "," + message);
+
                 return null;
             }
         };
@@ -93,10 +93,9 @@ public class APICaller {
                         .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                         .uri(URI.create(URLs.LOGIN))
                         .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                // parsing data
-                String body = response.body();
-                System.out.println(body);
+                Map<String, String> map = getResponseData(request);
+
+                String body = map.get("body");
                 Reader reader = new StringReader(body);
                 ObjectNode rootNode = mapper.readValue(reader, ObjectNode.class);
                 JsonNode tokenNode = rootNode.get("token");
@@ -104,26 +103,47 @@ public class APICaller {
                 SessionHandler sessionHandler = new SessionHandler();
                 sessionHandler.createSession(email, tokenNode.asText());
 
-                updateMessage(response.statusCode() + "," + tokenNode.asText());
+                updateMessage(map.get("statuscode") + "," + tokenNode.asText());
 
                 return null;
             }
         };
     }
 
+    private static Map<String, String> verifyAccount(String activationLink) throws InterruptedException, ExecutionException, TimeoutException {
+        HttpRequest activateAccountRequest = HttpRequest.newBuilder()
+                .header("Content-Type", "application/json; charset=utf-8")
+                .GET()
+                .uri(URI.create(activationLink))
+                .build();
+        return getResponseData(activateAccountRequest);
+    }
+
     public static Task<Void> getProfile(String id) {
-        return new Task<>() {
+        return new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                HttpRequest request = HttpRequest.newBuilder()
+                HttpRequest profileRequest = HttpRequest.newBuilder()
                         .header("Content-Type", "application/json; charset=utf-8")
                         .GET()
                         .uri(URI.create(URLs.GET_USERS + "/" + id))
                         .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                Map<?, ?> map = mapper.readValue(response.body(), Map.class);
+                Map<String, String> responseMap = getResponseData(profileRequest);
+                String body = responseMap.get("body");
+                String statuscode = responseMap.get("statuscode");
+                updateMessage(statuscode+";" +body);
+
                 return null;
             }
         };
+    }
+
+    private static Map<String, String> getResponseData(HttpRequest request) throws InterruptedException, ExecutionException, TimeoutException {
+        CompletableFuture<HttpResponse<String>> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String body = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        Map<String, String> map = new HashMap<>();
+        map.put("statuscode", String.valueOf(response.get().statusCode()));
+        map.put("body", body);
+        return map;
     }
 }
