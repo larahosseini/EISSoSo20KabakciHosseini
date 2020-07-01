@@ -14,9 +14,11 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private static Stage window;
 
     @Override
     public void start(Stage stage) throws IOException {
+        window = stage;
         stage.setResizable(false);
         scene = new Scene(loadFXML("login"));
         scene.getStylesheets().add(getClass().getResource("css/login.css").toExternalForm());
