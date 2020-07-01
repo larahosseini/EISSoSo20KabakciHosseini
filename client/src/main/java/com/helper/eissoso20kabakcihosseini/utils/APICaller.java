@@ -47,13 +47,13 @@ public class APICaller {
                         .uri(URI.create(URLs.CREATE_USER))
                         .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                         .build();
-//                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
                 Map<String, String> map = getResponseData(request);
                 Map<?, ?> data = mapper.readValue(map.get("body"), Map.class);
 
-                statusCode = Integer.parseInt(map.get("statusCode"));
-                message = (String) map.get("message");
-
+                statusCode = Integer.parseInt(map.get("statuscode"));
+                message = (String) data.get("message");
+                System.out.println(statusCode + " ---- " + message);
                 updateMessage(statusCode + "," + message);
 
                 return null;
@@ -87,7 +87,6 @@ public class APICaller {
                 login.setPassword(password);
                 String jsonData = mapper.writeValueAsString(login);
 
-                HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .header("Content-Type", "application/json; charset=utf-8")
                         .POST(HttpRequest.BodyPublishers.ofString(jsonData))
