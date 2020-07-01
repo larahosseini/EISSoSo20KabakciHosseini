@@ -12,19 +12,22 @@ import java.io.IOException;
 public class AlertHelper {
 
     public static Alert alert = new Alert(Alert.AlertType.NONE);
+    public static Stage stage = new Stage();
 
     public static void showErrorAlert(String error){
+        alert.initOwner(App.window);
         alert.setAlertType(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText("Es ist ein Fehler aufgetreten");
-        alert.setContentText("Message: " + error);
+        alert.setContentText("Fehler: " + error);
         alert.showAndWait();
     }
 
-    public static void showSuccesAlert(String message) {
+    public static void showSuccesAlert(String headerText, String message) {
+        alert.initOwner(App.window);
         alert.setAlertType(Alert.AlertType.INFORMATION);
         alert.setTitle("Success");
-        alert.setHeaderText("Der Account wurde erstellt, bitte überprüfe dein Postfach");
+        alert.setHeaderText(headerText);
         alert.setContentText(message);
         alert.showAndWait();
     }
@@ -32,8 +35,8 @@ public class AlertHelper {
     public static void showLoadingDialog(){
         try {
             Parent dialog = App.loadFXML("loading");
-            Stage stage = new Stage();
             stage.setScene(new Scene(dialog));
+            stage.initOwner(App.window);
             stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
