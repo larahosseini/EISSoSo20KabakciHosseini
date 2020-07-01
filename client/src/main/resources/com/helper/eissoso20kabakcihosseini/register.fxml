@@ -162,7 +162,7 @@
             <Font size="18.0" />
          </font>
       </JFXTextField>
-      <JFXButton fx:id="goToLoginButton" buttonType="RAISED" layoutX="394.0" layoutY="531.0" onAction="#goToLogin" ripplerFill="#0093d9" style="-fx-background-color: #0093d9;" text="Activate" textFill="WHITE">
+      <JFXButton fx:id="goToLoginButton" buttonType="RAISED" layoutX="394.0" layoutY="531.0" onAction="#goToLoginAfterAccountActivation" ripplerFill="#0093d9" style="-fx-background-color: #0093d9;" text="Activate" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>
