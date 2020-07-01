@@ -1,8 +1,11 @@
 package com.helper.eissoso20kabakcihosseini.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.eissoso20kabakcihosseini.App;
+import com.helper.eissoso20kabakcihosseini.models.User;
 import com.helper.eissoso20kabakcihosseini.utils.APICaller;
 import com.helper.eissoso20kabakcihosseini.utils.AlertHelper;
+import com.helper.eissoso20kabakcihosseini.utils.Data;
 import com.helper.eissoso20kabakcihosseini.utils.Validator;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
@@ -38,15 +41,6 @@ public class RegisterController implements Initializable {
             errorLabelStreet, errorLabelCity, errorLabelZipcode;
 
     @FXML
-    private Label messageLabel;
-
-    @FXML
-    private JFXProgressBar progressBar;
-
-    @FXML
-    private StackPane infoContainer;
-
-    @FXML
     private JFXTextField activationLinkField;
 
 
@@ -65,11 +59,11 @@ public class RegisterController implements Initializable {
                 String statuscode = t1.split(",")[0];
                 String message = t1.split(",")[1];
                 if (statuscode.equals("201")) {
-                    AlertHelper.showSuccesAlert(message);
+                    clearTextfield();
+                    AlertHelper.showSuccesAlert("Der Account wurde erstellt, bitte überprüfe dein Postfach", "Kopieren Sie den kompletten Aktivierungslink aus der E-Mail und füge Sie den Link unten ein");
                 } else if (statuscode.equals("400") || statuscode.equals("500")) {
                     AlertHelper.showErrorAlert(message);
                 }
-                System.out.println("Received message: " + message);
             }
         });
         new Thread(task).start();
@@ -81,27 +75,60 @@ public class RegisterController implements Initializable {
     }
 
     @FXML
-    private void goToLogin() throws IOException {
+    private void goToLoginAfterAccountActivation() throws InterruptedException {
         String link = activationLinkField.getText().trim();
-        Task<Void> task = APICaller.activateAccount(link);
+        String trimmedActivationLink = link.split("http://localhost:3000/")[1];
+        String id = trimmedActivationLink.split("/")[2];
+
+        Task<Void> activationTask = APICaller.activateAccount(link);
+        Task<Void> profileTask = APICaller.getProfile(id);
+        handleTaskForActivation(activationTask);
+        handleTaskForGettingProfileData(profileTask);
+
+        Thread activationThread = new Thread(activationTask);
+        activationThread.start();
+        activationThread.join();
+        new Thread(profileTask).start();
+    }
+
+    private void handleTaskForActivation(Task<?> task) {
         task.messageProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String message) {
                 String statuscode = message.split(",")[0];
                 String m = message.split(",")[1];
                 if (statuscode.equals("200")) {
-                    // change to profile screen
-                    try {
-                        App.setRoot("profile");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    AlertHelper.showLoadingDialog();
                 } else if (statuscode.equals("401")) {
                     AlertHelper.showErrorAlert(message);
                 }
             }
         });
-        new Thread(task).start();
+    }
+
+    private void handleTaskForGettingProfileData(Task<?> task) {
+        task.messageProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                String statuscode = t1.split(";")[0];
+                String message = t1.split(";")[1];
+                System.out.println(message);
+                if (statuscode.equals("200")) {
+                    try {
+                        ObjectMapper mapper = new ObjectMapper();
+                        System.out.println("Alert should close");
+                        User user = mapper.readValue(message, User.class);
+                        Data.saveUser(user);
+                        AlertHelper.stage.close();
+                        App.setRoot("login");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    System.out.println("User nicht gefunden");
+                }
+            }
+        });
     }
 
     // Hilfsfunktion, um zu überprüfen ob das emailField eine nicht richtige email beinhaltet, wenn ja zeige fehler an
@@ -206,6 +233,17 @@ public class RegisterController implements Initializable {
                 }
             }
         });
+    }
+
+    // löscht die eingabe nachdem der Account erstellt wurde
+    private void clearTextfield(){
+        emailField.clear();
+        passwordField.clear();
+        confirmPasswordField.clear();
+        cityField.clear();
+        streetField.clear();
+        streetNumberField.clear();
+        zipcodeField.clear();
     }
 
     @Override
