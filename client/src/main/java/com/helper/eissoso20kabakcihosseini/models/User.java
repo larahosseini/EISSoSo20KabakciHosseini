@@ -1,15 +1,5 @@
 package com.helper.eissoso20kabakcihosseini.models;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.helper.eissoso20kabakcihosseini.utils.UserDeserializer;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileWriter;
-import java.io.IOException;
-
-@JsonDeserialize(using = UserDeserializer.class)
 public class User {
 
     private String email;
