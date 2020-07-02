@@ -1,15 +1,12 @@
 package com.helper.eissoso20kabakcihosseini.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.helper.eissoso20kabakcihosseini.App;
 import com.helper.eissoso20kabakcihosseini.models.User;
-import com.helper.eissoso20kabakcihosseini.utils.APICaller;
-import com.helper.eissoso20kabakcihosseini.utils.AlertHelper;
-import com.helper.eissoso20kabakcihosseini.utils.Data;
-import com.helper.eissoso20kabakcihosseini.utils.Validator;
+import com.helper.eissoso20kabakcihosseini.utils.*;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
@@ -18,7 +15,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
@@ -116,7 +112,9 @@ public class RegisterController implements Initializable {
                 if (statuscode.equals("200")) {
                     try {
                         ObjectMapper mapper = new ObjectMapper();
-                        System.out.println("Alert should close");
+                        SimpleModule module = new SimpleModule();
+                        module.addDeserializer(User.class, new UserDeserializer());
+                        mapper.registerModule(module);
                         User user = mapper.readValue(message, User.class);
                         Data.saveUser(user);
                         AlertHelper.stage.close();
