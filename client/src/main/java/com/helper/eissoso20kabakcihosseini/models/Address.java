@@ -45,7 +45,7 @@ public class Address {
         return zipcode;
     }
 
-    public void setZipcode(Integer zipcode) {
+    public void setZipcode(int zipcode) {
         this.zipcode = zipcode;
     }
 
