@@ -59,4 +59,9 @@ public class SessionHandler {
         }
         return null;
     }
+
+    public static boolean deleteSession(){
+        String filePath = configDir + "/" + fileName;
+        return new File(filePath).delete();
+    }
 }
