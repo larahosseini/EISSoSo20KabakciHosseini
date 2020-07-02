@@ -81,7 +81,7 @@
             </JFXButton>
          </children>
       </HBox>
-      <VBox fx:id=" labelContainer" layoutX="100.0" layoutY="375.0" spacing="2.0">
+      <VBox fx:id="labelContainer" layoutX="100.0" layoutY="375.0" spacing="2.0">
          <children>
             <Separator prefWidth="200.0" />
             <HBox spacing="100.0">
