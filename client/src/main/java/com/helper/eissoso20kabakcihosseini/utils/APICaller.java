@@ -3,11 +3,9 @@ package com.helper.eissoso20kabakcihosseini.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.helper.eissoso20kabakcihosseini.models.Address;
-import com.helper.eissoso20kabakcihosseini.models.Login;
-import com.helper.eissoso20kabakcihosseini.models.User;
-import com.helper.eissoso20kabakcihosseini.models.UserRegistration;
+import com.helper.eissoso20kabakcihosseini.models.*;
 import javafx.concurrent.Task;
 
 import java.io.Reader;
@@ -148,6 +146,31 @@ public class APICaller {
                 String statuscode = responseMap.get("statuscode");
                 updateMessage(statuscode+";" +body);
 
+                return null;
+            }
+        };
+    }
+
+    public static Task<Void> updateUser(User user){
+        return new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Session session = SessionHandler.getSession();
+                ObjectMapper updateMapper = new ObjectMapper();
+                SimpleModule simpleModule = new SimpleModule();
+                simpleModule.addSerializer(User.class, new UserSerializer());
+                updateMapper.registerModule(simpleModule);
+                String json = updateMapper.writeValueAsString(user);
+                System.out.println(json);
+                HttpRequest updateRequest = HttpRequest.newBuilder()
+                        .header("Content-Type", "application/json; charset=utf-8")
+                        .header("Authorization", "Bearer " + session.getToken())
+                        .PUT(HttpRequest.BodyPublishers.ofString(json))
+                        .uri(URI.create(URLs.UPDATE_USER + "/" + user.getId()))
+                        .build();
+                Map<String, String> data = getResponseData(updateRequest);
+                System.out.println("Message: " + data.get("body"));
+                updateMessage(data.get("statuscode"));
                 return null;
             }
         };
