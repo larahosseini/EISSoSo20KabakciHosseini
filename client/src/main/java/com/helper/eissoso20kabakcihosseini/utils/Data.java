@@ -54,6 +54,12 @@ public class Data {
         return null;
     }
 
+    public static boolean deleteUserData(String email){
+        String filename = String.format("data-%s.json", email);
+        String filePath = CONFIG_DIR + "/" + filename;
+        return new File(filePath).delete();
+    }
+
     private static void createConfigDir() {
         File configFile = new File(CONFIG_DIR);
 
@@ -61,4 +67,5 @@ public class Data {
             configFile.mkdir();
         }
     }
+
 }
