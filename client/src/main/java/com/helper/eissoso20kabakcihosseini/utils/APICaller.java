@@ -118,6 +118,22 @@ public class APICaller {
         return getResponseData(activateAccountRequest);
     }
 
+    public static Task<Void> deleteAccount(String id) throws InterruptedException, ExecutionException, TimeoutException {
+        return new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                HttpRequest deleteRequest = HttpRequest.newBuilder()
+                        .header("Content-Type", "application/json; charset=utf-8")
+                        .DELETE()
+                        .uri(URI.create(URLs.DELETE_USER + "/" +id))
+                        .build();
+                Map<String, String> data = getResponseData(deleteRequest);
+                updateMessage(data.get("statuscode"));
+                return null;
+            }
+        };
+    }
+
     public static Task<Void> getProfile(String id) {
         return new Task<Void>() {
             @Override
