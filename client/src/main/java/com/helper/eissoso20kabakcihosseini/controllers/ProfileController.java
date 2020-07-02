@@ -63,6 +63,7 @@ public class ProfileController implements Initializable {
 
     @FXML
     private void updateProfile() {
+        String oldEmail = user.getEmail();
         String email = emailField.getText().trim();
         String city = cityField.getText().trim();
         String street = streetField.getText().trim();
@@ -79,7 +80,7 @@ public class ProfileController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String statuscode) {
                 if(statuscode.equals("200")) {
-                    Data.deleteUserData(email);
+                    Data.deleteUserData(oldEmail);
                     Data.saveUser(user);
                     AlertHelper.showSuccesAlert("Erfolgreich upgedatet", "Dein Profil wurde erfolgreich geupdatet");
 
