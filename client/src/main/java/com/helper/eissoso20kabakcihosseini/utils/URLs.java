@@ -6,4 +6,5 @@ public class URLs {
     public static String LOGIN = "http://localhost:3000/login";
     public static String GET_USERS = "http://localhost:3000/api/users";
     public static String DELETE_USER = "http://localhost:3000/api/users";
+    public static String UPDATE_USER = "http://localhost:3000/api/users";
 }
