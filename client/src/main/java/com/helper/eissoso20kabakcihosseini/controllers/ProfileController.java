@@ -1,12 +1,21 @@
 package com.helper.eissoso20kabakcihosseini.controllers;
 
 import com.helper.eissoso20kabakcihosseini.App;
+import com.helper.eissoso20kabakcihosseini.models.Session;
+import com.helper.eissoso20kabakcihosseini.models.User;
+import com.helper.eissoso20kabakcihosseini.utils.Data;
+import com.helper.eissoso20kabakcihosseini.utils.SessionHandler;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
@@ -19,13 +28,29 @@ public class ProfileController implements Initializable {
     private JFXTextField emailField, cityField, streetField, streetNumberField, zipcodeField;
 
     @FXML
-    private JFXButton updateButton, passwordResetButton;
+    private JFXButton updateButton, passwordResetButton, deleteAccountButton;
 
     @FXML
     private JFXToggleButton editButton;
 
     @FXML
     private Text usernameText;
+
+    @FXML
+    private Label emailLabel, streetLabel, zipcodeLabel, cityLabel;
+
+    @FXML
+    private VBox labelContainer, textFieldContainer;
+
+    @FXML
+    private HBox emailTextContainer;
+
+    private User user;
+
+    @FXML
+    private void deleteAccount() {
+
+    }
 
     @FXML
     private void updateProfile() {
@@ -43,5 +68,42 @@ public class ProfileController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateButton.visibleProperty().bind(editButton.selectedProperty());
+        editButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                toggleTextFieldAndLabel(t1, !t1);
+            }
+        });
+
+
+        Session session = SessionHandler.getSession();
+        if (session == null) {
+            App.window.close();
+        }
+
+        try {
+            user = Data.getUserData(session.getEmail());
+            emailLabel.setText(user.getEmail());
+            streetLabel.setText(user.getAddress().getStreet() + " " + user.getAddress().getStreetNumber());
+            cityLabel.setText(user.getAddress().getCity());
+            zipcodeLabel.setText(String.valueOf(user.getAddress().getZipcode()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        BooleanBinding booleanBinding = emailField.textProperty().isEmpty()
+                .or(cityField.textProperty().isEmpty())
+                .or(streetField.textProperty().isEmpty())
+                .or(streetNumberField.textProperty().isEmpty())
+                .or(zipcodeField.textProperty().isEmpty())
+                .or(cityField.textProperty().isEmpty());
+        updateButton.disableProperty().bind(booleanBinding);
+    }
+
+    private void toggleTextFieldAndLabel(boolean textfieldVisibility, boolean labelVisibility) {
+        emailField.visibleProperty().setValue(textfieldVisibility);
+        emailTextContainer.visibleProperty().setValue(labelVisibility);
+        textFieldContainer.visibleProperty().setValue(textfieldVisibility);
+        labelContainer.visibleProperty().setValue(labelVisibility);
     }
 }
