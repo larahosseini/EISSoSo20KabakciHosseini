@@ -63,6 +63,32 @@ public class ProfileController implements Initializable {
 
     @FXML
     private void updateProfile() {
+        String email = emailField.getText().trim();
+        String city = cityField.getText().trim();
+        String street = streetField.getText().trim();
+        String streetNumber = streetNumberField.getText().trim();
+        String zipcode = zipcodeField.getText().trim();
+
+        user.setEmail(email);
+        user.getAddress().setCity(city);
+        user.getAddress().setStreet(street);
+        user.getAddress().setStreetNumber(streetNumber);
+        user.getAddress().setZipcode(Integer.parseInt(zipcode));
+        Task<Void> task = APICaller.updateUser(user);
+        task.messageProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String statuscode) {
+                if(statuscode.equals("200")) {
+                    Data.deleteUserData(email);
+                    Data.saveUser(user);
+                    AlertHelper.showSuccesAlert("Erfolgreich upgedatet", "Dein Profil wurde erfolgreich geupdatet");
+
+                }else {
+                    AlertHelper.showErrorAlert("Bitte überprüfe deine Eingaben nochmal und versuche es nochmal");
+                }
+            }
+        });
+        new Thread(task).start();
     }
 
     @FXML
