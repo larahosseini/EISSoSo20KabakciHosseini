@@ -33,7 +33,6 @@ public class Data {
         createConfigDir();
 
         ObjectMapper mapper = new ObjectMapper();
-        String filename = String.format("data-%s.json", email);
         File configDir = new File(CONFIG_DIR);
 
         FileFilter filter = new FileFilter() {
