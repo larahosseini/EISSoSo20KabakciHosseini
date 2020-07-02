@@ -3,6 +3,8 @@ package com.helper.eissoso20kabakcihosseini.controllers;
 import com.helper.eissoso20kabakcihosseini.App;
 import com.helper.eissoso20kabakcihosseini.models.Session;
 import com.helper.eissoso20kabakcihosseini.models.User;
+import com.helper.eissoso20kabakcihosseini.utils.APICaller;
+import com.helper.eissoso20kabakcihosseini.utils.AlertHelper;
 import com.helper.eissoso20kabakcihosseini.utils.Data;
 import com.helper.eissoso20kabakcihosseini.utils.SessionHandler;
 import com.jfoenix.controls.JFXButton;
@@ -11,8 +13,13 @@ import com.jfoenix.controls.JFXToggleButton;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -21,6 +28,8 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class ProfileController implements Initializable {
 
@@ -48,8 +57,8 @@ public class ProfileController implements Initializable {
     private User user;
 
     @FXML
-    private void deleteAccount() {
-
+    private void deleteAccount() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+        AlertHelper.showWarningBeforeDeleteAlert(user.getEmail(), user.getId());
     }
 
     @FXML
