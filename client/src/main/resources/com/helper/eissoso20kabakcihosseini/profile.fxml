@@ -4,9 +4,12 @@
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import java.lang.String?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
@@ -16,7 +19,25 @@
    <children>
       <Pane prefHeight="200.0" prefWidth="876.0" styleClass="headerContainer">
          <children>
-            <JFXTextField fx:id="emailField" focusColor="#0093d9" labelFloat="true" layoutX="100.0" layoutY="84.0" prefHeight="33.0" prefWidth="281.0" promptText="E-MAIL" />
+            <StackPane alignment="CENTER_LEFT" layoutX="100.0" layoutY="84.0">
+               <children>
+                  <JFXTextField fx:id="emailField" focusColor="#0093d9" labelFloat="true" prefHeight="33.0" prefWidth="281.0" promptText="E-MAIL" visible="false" />
+                  <HBox fx:id="emailTextContainer" alignment="CENTER_LEFT" spacing="20.0" StackPane.alignment="CENTER">
+                     <children>
+                        <Label text="E-Mail:" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="emailLabel" text="Label" textFill="WHITE">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </StackPane>
             <Circle fill="DODGERBLUE" layoutX="731.0" layoutY="200.0" radius="100.0" stroke="BLACK" strokeType="INSIDE" />
             <Text fx:id="usernameText" fill="WHITE" layoutX="653.0" layoutY="213.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username">
                <font>
@@ -32,33 +53,92 @@
             <Font size="32.0" />
          </font>
       </Text>
-      <VBox layoutX="100.0" layoutY="336.0" spacing="50.0">
+      <VBox fx:id="textFieldContainer" layoutX="100.0" layoutY="336.0" spacing="50.0" visible="false">
          <children>
             <HBox spacing="30.0">
                <children>
-                  <JFXTextField fx:id="streetField" labelFloat="true" prefHeight="40.0" prefWidth="333.0" promptText="Straße" />
-                  <JFXTextField fx:id="streetNumberField" labelFloat="true" prefHeight="40.0" prefWidth="136.0" promptText="Hausnummer" />
+                  <JFXTextField fx:id="streetField" focusColor="#0093d9" labelFloat="true" prefHeight="40.0" prefWidth="333.0" promptText="Straße" />
+                  <JFXTextField fx:id="streetNumberField" focusColor="#0093d9" labelFloat="true" prefHeight="40.0" prefWidth="136.0" promptText="Hausnummer" />
                </children>
             </HBox>
             <HBox spacing="30.0">
                <children>
-                  <JFXTextField fx:id="zipcodeField" labelFloat="true" prefHeight="40.0" prefWidth="136.0" promptText="PLZ" />
-                  <JFXTextField fx:id="cityField" labelFloat="true" prefHeight="40.0" prefWidth="333.0" promptText="Stadt" />
+                  <JFXTextField fx:id="zipcodeField" focusColor="#0093d9" labelFloat="true" prefHeight="40.0" prefWidth="136.0" promptText="PLZ" />
+                  <JFXTextField fx:id="cityField" focusColor="#0093d9" labelFloat="true" prefHeight="40.0" prefWidth="333.0" promptText="Stadt" />
                </children>
             </HBox>
          </children>
       </VBox>
-      <JFXButton fx:id="passwordResetButton" layoutX="714.0" layoutY="512.0" styleClass="passwordResetButton" text="Password Ändern" textFill="WHITE" />
-      <HBox layoutX="100.0" layoutY="508.0" prefHeight="33.0" prefWidth="499.0" spacing="40.0">
+      <JFXButton fx:id="passwordResetButton" layoutX="714.0" layoutY="525.0" styleClass="passwordResetButton" text="Password Ändern" textFill="WHITE" />
+      <HBox layoutX="100.0" layoutY="521.0" prefHeight="33.0" prefWidth="499.0" spacing="40.0">
          <children>
+            <JFXButton fx:id="deleteAccountButton" buttonType="RAISED" onAction="#deleteAccount" prefHeight="33.0" prefWidth="281.0" styleClass="deleteAccountButton" text="ACCOUNT LÖSCHEN" />
             <JFXButton fx:id="updateButton" buttonType="RAISED" onAction="#updateProfile" prefHeight="33.0" prefWidth="281.0" text="AKTUALISIEREN">
                <styleClass>
                   <String fx:value="editButton" />
                   <String fx:value="updateButton" />
                </styleClass>
             </JFXButton>
-            <JFXButton fx:id="deleteAccountButton" buttonType="RAISED" onAction="#deleteAccount" prefHeight="33.0" prefWidth="281.0" styleClass="deleteAccountButton" text="ACCOUNT LÖSCHEN" />
          </children>
       </HBox>
+      <VBox fx:id=" labelContainer" layoutX="100.0" layoutY="375.0" spacing="2.0">
+         <children>
+            <Separator prefWidth="200.0" />
+            <HBox spacing="100.0">
+               <children>
+                  <HBox>
+                     <children>
+                        <HBox fx:id="streetTextContainer" alignment="CENTER_LEFT" spacing="20.0">
+                           <children>
+                              <Label text="Straße:" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="streetLabel" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <HBox spacing="80.0">
+                     <children>
+                        <HBox fx:id="zipcodeTextContainer" alignment="CENTER_LEFT" spacing="20.0">
+                           <children>
+                              <Label text="PLZ:" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="zipcodeLabel" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="cityTextContainer" alignment="CENTER_LEFT" spacing="20.0">
+                           <children>
+                              <Label text="Stadt:" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="cityLabel" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
